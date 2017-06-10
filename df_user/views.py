@@ -3,6 +3,13 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from models import *
 from hashlib import sha1
+from decorator import *
+import sys
+default_encoding = 'utf-8'
+if sys.getdefaultencoding() != default_encoding:
+    reload(sys)
+    sys.setdefaultencoding(default_encoding)
+
 # Create your views here.
 
 def register(request):
@@ -47,13 +54,14 @@ def register(request):
             return render(request, 'df_user/register.html')
         return render(request, 'df_user/register.html',{'title':'注册'})
 
-
-
+# 显示登陆
 def login(request):
     context = {'title': '登陆'}
     return render(request, 'df_user/login.html', context)
 
 
+
+# 处理登陆
 def login_handler(request):
     # 创建post对象
     post_object = request.POST
@@ -63,8 +71,6 @@ def login_handler(request):
     juser = post_object.get('juser')
     # 获取数据库中的用户信息
     dbuser = UserInfo.objects.filter(uname=ruser)
-
-
     # 获取的密码加密
     s1 = sha1()
     s1.update(rpasswd)
@@ -76,7 +82,6 @@ def login_handler(request):
             cuser = 1
         else:
             cuser = 0
-
         # 判断密码
         if len(dbpasswd) > 0:
             if rpasswd_sha1 == dbpasswd[0].upasswd:
@@ -85,14 +90,16 @@ def login_handler(request):
                 cpasswd = 0
 
             # 判断是否记住账户,记住写入cookie
-            reponse = redirect('/user/register/')
+            reponse = redirect('/user/center_info/')
             if juser == '1':
                 reponse.set_cookie('user_name', ruser)
             else:
                 reponse.delete_cookie('user_name')
+            # 记录用户登陆的id,方便以后的查询
             request.session['user_id'] = dbuser[0].id
-            se = request.session.get('user_id')
-            print se,'se'
+            request.session['user_name'] = dbuser[0].uname
+            #se = request.session.get('user_id')
+           # print se,'se'
             return reponse
     else:
         cuser = 0
@@ -100,26 +107,72 @@ def login_handler(request):
             cpasswd = 1
         else:
             cpasswd = 0
+        # 删除数据库中存储的用户登陆id
         del request.session['user_id']
-        se = request.session.get('user_id')
-        print se, 'se'
+        del request.session['user_name']
+        #se = request.session.get('user_id')
+        #print se, 'se'
         context = {'cuser': cuser, 'cpasswd': cpasswd, }
         return render(request, 'df_user/register.html', context)
 
+# 退出
+def logout(request):
+    request.session.flush()
+    return redirect('/user/login/')
 
 
 
-
-
-
-
+# 显示用户信息
+@login_check
 def center_info(request):
-    pass
+    user_name = request.session.get('user_name')
+    user_object = UserInfo.objects.filter(id=request.session.get('user_id'))
+    user_phone = user_object[0].uiphone
+    user_site = user_object[0].usite
+    # 上下问参数 用户名,联系方式,联系地址
+    context = {'title':'用户中心','ys':1,'user_name': user_name, 'user_phone': user_phone, 'user_site': user_site}
+    return render(request,'df_user/user_center_info.html',context)
+
+# 处理用户信息-最近浏览
+def info_handler(request):
+    # 最近浏览
+
+    return JsonResponse({})
 
 
+# 显示用户订单
 def center_order(request):
-    pass
+    context = {'title': '用户中心', 'ys':2}
+    return render(request, 'df_user/user_center_order.html', context)
 
-
+# 显示用户地址
 def center_siter(request):
-    pass
+
+    user_object = UserInfo.objects.get(id=request.session.get('user_id'))
+    name = user_object.sjr
+    siter = user_object.usite
+    phone = user_object.uiphone
+    yb = user_object.yubian
+    siter_str = siter + '  邮编:' + yb + ' ( 收件人:' + name + ') ' + '联系方式:' + phone
+    context = {'title': '用户中心', 'ys':3,'siter_str':siter_str}
+
+    return render(request, 'df_user/user_center_site.html', context)
+
+def siter_handler(request):
+    # 获取信息
+    request_object = request.POST
+    name = request_object.get('sname','')
+    siter = request_object.get('ssiter','')
+    phone = request_object.get('sphone','')
+    yb = request_object.get('syb','')
+    user_object = UserInfo.objects.get(id=request.session.get('user_id'))
+    print user_object
+    user_object.sjr = name
+    user_object.uiphone = phone
+    user_object.usite = siter
+    user_object.yubian = yb
+    user_object.save()
+    # 拼接收货地址
+    siter_str = siter+'  邮编:'+yb+' ( 收件人:'+name+') '+'联系方式:'+phone
+    context = {'siter_str':siter_str,'ys':3}
+    return render(request,'df_user/user_center_site.html',context)
