@@ -56,6 +56,7 @@ def register(request):
 
 # 显示登陆
 def login(request):
+
     context = {'title': '登陆'}
     return render(request, 'df_user/login.html', context)
 
@@ -118,7 +119,7 @@ def login_handler(request):
 # 退出
 def logout(request):
     request.session.flush()
-    return redirect('/user/login/')
+    return redirect('/')
 
 
 
@@ -130,7 +131,8 @@ def center_info(request):
     user_phone = user_object[0].uiphone
     user_site = user_object[0].usite
     # 上下问参数 用户名,联系方式,联系地址
-    context = {'title':'用户中心','ys':1,'user_name': user_name, 'user_phone': user_phone, 'user_site': user_site}
+    context = {'title':'用户中心','ys':1,'user_name': user_name,
+               'user_phone': user_phone, 'user_site': user_site,}
     return render(request,'df_user/user_center_info.html',context)
 
 # 处理用户信息-最近浏览

@@ -20,7 +20,7 @@
 
 					<form method="post" action="/user/login_handler/">
                         {%csrf_token%}
-						<input type="text" name="username" class="name_input" placeholder="请输入用户名">
+						<input type="text" name="username" class="name_input" placeholder="请输入用户名" value="{{request.COOKIES.user_name|default:''}}">
                         <!--{'cuser':cuser,'cpasswd':cpasswd}-->
                         {%if cuser == '0'%}
 						<div class="user_error">输入错误</div>
