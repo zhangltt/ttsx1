@@ -1,6 +1,6 @@
 #coding=utf-8
 from django.shortcuts import render,redirect
-from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
+from django.http import HttpResponse,JsonResponse,HttpResponseRedirect,HttpRequest
 from models import *
 from hashlib import sha1
 from decorator import *
@@ -64,6 +64,7 @@ def login(request):
 
 # 处理登陆
 def login_handler(request):
+
     # 创建post对象
     post_object = request.POST
     # 接收用户名,密码和记住用户的值(等于'1'表示勾选)
@@ -89,9 +90,10 @@ def login_handler(request):
                 cpasswd = 1
             else:
                 cpasswd = 0
-
+            url = request.COOKIES.get('url')
+            print url
             # 判断是否记住账户,记住写入cookie
-            reponse = redirect('/user/center_info/')
+            reponse = redirect(url)
             if juser == '1':
                 reponse.set_cookie('user_name', ruser)
             else:
