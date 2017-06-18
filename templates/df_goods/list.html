@@ -1,0 +1,134 @@
+{%extends 'bash.html'%}
+
+
+{%block head%}
+<script type="text/javascript">
+
+    $(function(){
+
+        // 绑定排行
+//        $('.sort_bar').delegate('a','click',function(){
+//            $(this).addClass('active');
+//            $(this).siblings().removeClass('active');
+//            //$.get($(this).prop('id'))
+//			//$.get('/index/list'+$('#type_id').val()+'_/',{'opt':$(this).prop('id')})
+//
+//        })
+//
+
+
+        // 绑定页码点击
+
+//		var cssys = $('#cssys').val();
+//        alert(cssys)
+//        if(cssys == '1')
+//		{
+//		   $('.pagenation').children().eq(1).addClass('active');
+//		   $('.pagenation').children().eq(1).prop('href','javascript:;');
+//
+//		}
+//		if(cssys == "" )
+//		{
+//		  $('.pagenation').children().eq(2).addClass('active');
+//		  $('.pagenation').children().eq(1).prop('href','javascript:;');
+//		}
+//
+
+
+
+//         $('.pagenation').delegate('a','click',function(){
+//
+//            $(this).addClass('active');
+//            $(this).siblings().removeClass('active');
+//
+//
+//            });
+
+
+
+
+
+
+
+
+
+    });
+
+
+
+
+</script>
+{%endblock head%}
+
+{%block content%}
+
+<div class="breadcrumb">
+		<a href="#">全部分类</a>
+		<span>></span>
+		<a href="#">{{type_object.ttitle}}</a>
+		<input type="hidden" value="{{type_object.id}}" id="type_id">
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+                    {%for goods in new2%}
+					<li>
+						<a href="#"><img src="/static/{{goods.gpic}}"></a>
+						<h4><a href="#">{{goods.gtitle}}</a></h4>
+						<div class="prize">￥{{goods.gprice}}</div>
+					</li>
+                    {%endfor%}
+
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<div class="sort_bar">
+				<a href="/index/list{{type_object.id}}_1/?opt=1" {%if opt == "1"%} class="active" {%endif%} >默认</a>
+				<a href="/index/list{{type_object.id}}_1/?opt=2" {%if opt == "2"%} class="active" {%endif%} >价格</a>
+				<a href="/index/list{{type_object.id}}_1/?opt=3" {%if opt == "3"%} class="active" {%endif%} >人气</a>
+			</div>
+
+
+			<ul class="goods_type_list clearfix">
+                {%for goods in lgoods%}
+				<li>
+					<a href="detail.html"><img src="/static/{{goods.gpic}}" id="11"></a>
+					<h4><a href="detail.html">{{goods.gtitle}}</a></h4>
+					<div class="operate">
+						<span class="prize">￥{{goods.gprice}}</span>
+						<span class="unit">{{goods.gprice}}/{{goods.gunit}}</span>
+						<a href="ja" class="add_goods" title="加入购物车"></a>
+					</div>
+				</li>
+                {%endfor%}
+
+			</ul>
+
+			<div class="pagenation">
+				<input type="hidden"  value="{{cssys}}" id="cssys">
+                {%if hasPre%}
+				<a href="/index/list1_{{pre}}/"><上一页</a>
+
+                {%endif%}
+				{%for page in page_list%}
+				{%if page == cssys%}
+				<a href="/index/list1_{{page}}/" class="active">{{page}}</a>
+				{%else%}
+				<a href="/index/list1_{{page}}/" >{{page}}</a>
+				{%endif%}
+				{%endfor%}
+                {%if hasNext%}
+				<a href="/index/list1_{{next}}/">下一页></a>
+                {%endif%}
+
+			</div>
+		</div>
+	</div>
+
+
+{%endblock content%}
