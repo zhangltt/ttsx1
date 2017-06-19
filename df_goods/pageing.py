@@ -5,38 +5,41 @@ from models import *
 class Paging(object):
 
     def __init__(self,data_object_list,count,pages):
-        # 保存对象列表
+        '''
+
+        :param data_object_list: 接收数据库中取出的对象列表
+        :param count: 每页显示的商品条数
+        :param pages: 显示的页码条数
+        '''
         self.data = data_object_list
-        # 每页展示的商品条数
         self.count = int(count)
-        # 显示的页码个数
         self.pages=int(pages)
+        # 保存临时参数
         self.pre=1
 
 
-    # 计算总页数
+    # 计算总页数,装饰器的作用是在调用函数的时候可以不写()
+    @property
     def jspages(self):
         # 计算总页数
-        num1 = len(self.data) % self.count
-        num2 = len(self.data) / self.count
-
-        if num1 != 0:
-            pages = num2 + 1
+        # divmod()返回一个含有两个元素的元祖,第一个元素为商,第二个元素为余数
+        nums = divmod(len(self.data), self.count)
+        if nums[1] != 0:
+            pages = nums[0] + 1
         else:
-            pages = num2
+            pages = nums[0]
         return pages
 
 
     # 判断是否有上一页,有返回True,没有返回False
-    # 参数page为当前页
+    # 参数dpage为当前页
     def has_pre(self,dpage):
-
-        dpage=int(dpage)
+        try:
+            dpage=int(dpage)
+        except:
+            dpage=1
+        # 保存前一页
         self.pre = dpage - 1
-        # 计算总页数
-        pages = self.jspages()
-        # 判断如果总页数-当前页等于总页数-1,则表示没有前一页
-        #if pages-dpage==pages-1:
         if self.pre < 1:
             return False
         else:
@@ -45,15 +48,15 @@ class Paging(object):
 
 
     # 判断是否有下一页,有返回True,没有返回false
-    # 参数page为当前页
+    # 参数dpage为当前页
     def has_next(self,dpage):
-        dpage=int(dpage)
+        try:
+            dpage = int(dpage)
+        except:
+            dpage = 1
         self.pre = dpage + 1
-        pages = self.jspages()
-        print pages,'总页数'
-        print self.pre,'下一页'
-        print dpage,'当前页'
-        # 如果当前页等于总页数表示最后一页
+        # 获取总页数
+        pages = self.jspages
         if self.pre > pages:
             return False
         else:
@@ -64,51 +67,55 @@ class Paging(object):
     # 返回当前页的所有商品的对象列表
     # 参数为当前的页码
     def current_page(self,dpage):
-        dpage=int(dpage)
-        # 获取上一页的页码
-        #self.pre = dpage - 1
+        try:
+            dpage = int(dpage)
+        except:
+            dpage = 1
 
         # 获取当前页全部商品的起始位置
         start = (dpage-1)*self.count
         # 获取当前页全部商品的结束位置
         end = dpage*self.count
 
-
+        # 如果当前页的最后一个商品的个数<总商品的个数就显示start到end的商品
         if end<len(self.data):
-            #print start, 'start'
             dataPages = self.data[start:end]
-
         else:
-
             dataPages=self.data[start:]
-
-            print dataPages
         return dataPages
 
-    # 显示页码
-    def d_pages(self,dpage):
-        dpage=int(dpage)
+    # 返回页码
+    def pageList(self,dpage):
+        try:
+            dpage = int(dpage)
+        except:
+            dpage = 1
 
-        # 获取总页数
-        zpages = self.jspages()
+        # 根据当前页计算显示的起始位置
+        start = dpage - self.pages / 2
+        # 根据当前页计算显示的结束位置
+        end = dpage + self.pages / 2
+        # 计算最后一组页码的起始位置
+        endstart = self.jspages - self.pages
+        # 创建保存页码的列表
         page_list = []
-        # 获取商品总条数
-        # nums = len(self.data)
-        # 列表切片,取出当前页商品对象列表
-        # if dpage>zpages-self.pages:
-        #     for i in range(zpages-self.pages,zpages+1):
-        #         page_list.append(i)
 
-        # 如果总页数-当前页数>设定的显示页数
-        if zpages-dpage>=self.pages:
-            # 创建一个从当前页数到显示页数+当前页数的一个列表,此时的列表长度为5
-            for i in range(dpage,self.pages+dpage):
+        # 如果当前页<显示的页数的一半则点击的时候显示的为当前页
+        if dpage<=self.pages/2:
+            for i in range(1,self.pages+1):
                 page_list.append(i)
 
+        # 如果点击的当前页>总页数-显示页的一半的时候,点击的时候显示当前页
+        elif dpage>=self.jspages-self.pages/2:
+            print endstart,'endstart'
+            print self.jspages,'self.jspages'
+            for i in range(endstart+1,self.jspages+1):
+                page_list.append(i)
+
+
+        # 否则点击的当前页前面+显示页数的一半,后面+显示页数的一般
+        # 当前页一直在中间
         else:
-            # 否则创建一个当前页到最后一页的列表
-            for i in range(dpage,zpages+1):
+            for i in range(start, end + 1):
                 page_list.append(i)
         return page_list
-
-

@@ -1,74 +1,17 @@
 {%extends 'bash.html'%}
 
 
-{%block head%}
-<script type="text/javascript">
 
-    $(function(){
-
-        // 绑定排行
-//        $('.sort_bar').delegate('a','click',function(){
-//            $(this).addClass('active');
-//            $(this).siblings().removeClass('active');
-//            //$.get($(this).prop('id'))
-//			//$.get('/index/list'+$('#type_id').val()+'_/',{'opt':$(this).prop('id')})
-//
-//        })
-//
-
-
-        // 绑定页码点击
-
-//		var cssys = $('#cssys').val();
-//        alert(cssys)
-//        if(cssys == '1')
-//		{
-//		   $('.pagenation').children().eq(1).addClass('active');
-//		   $('.pagenation').children().eq(1).prop('href','javascript:;');
-//
-//		}
-//		if(cssys == "" )
-//		{
-//		  $('.pagenation').children().eq(2).addClass('active');
-//		  $('.pagenation').children().eq(1).prop('href','javascript:;');
-//		}
-//
-
-
-
-//         $('.pagenation').delegate('a','click',function(){
-//
-//            $(this).addClass('active');
-//            $(this).siblings().removeClass('active');
-//
-//
-//            });
-
-
-
-
-
-
-
-
-
-    });
-
-
-
-
-</script>
-{%endblock head%}
 
 {%block content%}
-
+{%block content1%}
 <div class="breadcrumb">
 		<a href="#">全部分类</a>
 		<span>></span>
 		<a href="#">{{type_object.ttitle}}</a>
 		<input type="hidden" value="{{type_object.id}}" id="type_id">
 	</div>
-
+{%endblock content1%}
 	<div class="main_wrap clearfix">
 		<div class="l_wrap fl clearfix">
 			<div class="new_goods">
@@ -85,7 +28,7 @@
 				</ul>
 			</div>
 		</div>
-
+		{%block right%}
 		<div class="r_wrap fr clearfix">
 			<div class="sort_bar">
 				<a href="/index/list{{type_object.id}}_1/?opt=1" {%if opt == "1"%} class="active" {%endif%} >默认</a>
@@ -128,6 +71,7 @@
 
 			</div>
 		</div>
+		{%endblock right%}
 	</div>
 
 
