@@ -3,10 +3,13 @@ from django.shortcuts import render
 from django.http import HttpResponse,JsonResponse
 from models import *
 from pageing import *
+from df_carts.models import *
 # Create your views here.
 
 
 def index(request):
+    # 获取购物车的商品条数
+    cart_nums = CartInfo.objects.filter(user=request.session['user_id']).count()
 
     type_list = TypeInfo.objects.all()
     lists = []
@@ -17,7 +20,7 @@ def index(request):
             'new':type.goodsinfo_set.order_by('-id')[0:4],
         })
     # 需要返回所有商品分类对象的列表
-    context = {'head':1,'title':'首页','type_list':lists}
+    context = {'head':1,'title':'首页','type_list':lists,'cart_nums':cart_nums}
     return render(request,'df_goods/index.html',context)
 
 # 显示商品列表
@@ -87,9 +90,30 @@ def goods_detail(request, goodsid):
     new2 = type_object[0].goodsinfo_set.order_by('-id')[0:2]
     # 获取商品对象
     goods_object = GoodsInfo.objects.get(id=goodsid)
-    context={'head':1,'title':'商品列表','new2':new2,'type':type_object[0],"goods":goods_object}
+    # 购物车中的商品条数
+    cart_nums = CartInfo.objects.filter(user=request.session['user_id']).count()
+    context={'head':1,'title':'商品列表','new2':new2,'type':type_object[0],"goods":goods_object
+             ,'cart_nums':cart_nums}
     return render(request,'df_goods/detail.html',context)
 
 
 def detail_handle(request):
-    pass
+    nums = request.GET.get('nums',0)
+    goodsid = request.GET.get('goodsid',0)
+    # 获取购物车对象列表
+    object_list = CartInfo.objects.filter(goods__id=int(goodsid))
+    # 判断是否有这个商品的对象
+    if len(object_list) > 0:
+        cart_object = object_list[0]
+        cart_object.count += int(nums)
+        cart_object.save()
+    else:
+        # 创建购物车对象,添加商品
+        cart_object = CartInfo()
+        cart_object.goods = GoodsInfo.objects.get(id=int(goodsid))
+        cart_object.count = int(nums)
+        cart_object.user = UserInfo.objects.get(id=request.session['user_id'])
+        cart_object.save()
+    # 获取购物车中这个用户的条数(商品品种的个数)
+    cart_nums = CartInfo.objects.filter(user=request.session['user_id']).count()
+    return JsonResponse({'count':cart_nums})

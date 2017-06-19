@@ -10,17 +10,26 @@
             var dj = parseFloat($('.show_pirze').children('em').text());
             var count = parseInt($('.num_show').val());
             var zj = dj * count;
-            // 插入总计
-            $('.total').children('em').text(zj + '元');
+            // 插入总计,保留2位小数
+            $('.total').children('em').text(zj.toFixed(2) + '元');
 
         };
+// -----------------------------------------------------------------
+	  // 点击购物车发送请求的
 
-	  // 发送请求的函数
-		function get_agix(){
-		    var nums = $('.num_show').val();
+		$('#add_cart').click(function(){
+
+		    $.get('/index/detail_handle',{"nums":$('.num_show').val(),"goodsid":$("#goodsid").val()},function(data){
+					alert($("#goodsid").val())
+
+			});
 
 
-		};
+
+		});
+
+
+
 
 //  add-------------------------------------------------------------
 		// 绑定点击时间
@@ -83,6 +92,7 @@
 		<a href="#">全部分类</a>
 		<span>></span>
 		<a href="#">{{type.ttitle}}</a>
+
 		<span>></span>
 		<a href="#">商品详情</a>
 </div>
@@ -111,6 +121,7 @@
 			<div class="operate_btn">
 				<a href="javascript:;" class="buy_btn">立即购买</a>
 				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>
+				<input type="hidden" value="{{goods.id}}" id="goodsid">
 			</div>
 		</div>
 	</div>

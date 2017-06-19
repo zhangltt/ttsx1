@@ -148,7 +148,7 @@ def center_info(request):
     user_phone = user_object[0].uiphone
     user_site = user_object[0].usite
     # 上下问参数 用户名,联系方式,联系地址
-    context = {'title':'用户中心','ys':1,'user_name': user_name,
+    context = {'title':'用户中心','ftitle':'用户中心','ys':1,'user_name': user_name,
                'user_phone': user_phone, 'user_site': user_site,}
     return render(request,'df_user/user_center_info.html',context)
 
@@ -161,7 +161,7 @@ def info_handler(request):
 
 # 显示用户订单
 def center_order(request):
-    context = {'title': '用户中心', 'ys':2}
+    context = {'title': '用户中心','ftitle':'用户中心', 'ys':2}
     return render(request, 'df_user/user_center_order.html', context)
 
 # 显示用户地址
@@ -173,7 +173,7 @@ def center_siter(request):
     phone = user_object.uiphone
     yb = user_object.yubian
     siter_str = siter + '  邮编:' + yb + ' ( 收件人:' + name + ') ' + '联系方式:' + phone
-    context = {'title': '用户中心', 'ys':3,'siter_str':siter_str}
+    context = {'title': '用户中心','ftitle':'用户中心', 'ys':3,'siter_str':siter_str}
 
     return render(request, 'df_user/user_center_site.html', context)
 

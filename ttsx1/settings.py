@@ -41,6 +41,8 @@ INSTALLED_APPS = (
     'df_goods',
     'df_order',
     'tinymce',
+    'df_carts',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -97,6 +99,7 @@ DATABASES = {
 LANGUAGE_CODE = 'zh-Hans'
 
 TIME_ZONE = 'Asia/Shanghai'
+
 
 USE_I18N = True
 
