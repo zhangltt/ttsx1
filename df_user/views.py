@@ -68,9 +68,18 @@ def login_handler(request):
     # 创建post对象
     post_object = request.POST
     # 接收用户名,密码和记住用户的值(等于'1'表示勾选)
+
     ruser = post_object.get('username')
     rpasswd = post_object.get('pwd')
+    if ruser == '' or rpasswd == '':
+         cuser = 0
+         cpasswd = 0
+         context = {'cuser': cuser, 'cpasswd': cpasswd, }
+         return render(request, 'df_user/login.html', context)
+
     juser = post_object.get('juser')
+
+
     # 获取数据库中的用户信息
     dbuser = UserInfo.objects.filter(uname=ruser)
     # 获取的密码加密
@@ -80,16 +89,13 @@ def login_handler(request):
     dbpasswd = UserInfo.objects.filter(upasswd=rpasswd_sha1)
     # 判断输入的信息是否与数据库中的相同,相同返回1,不同返回0
     if len(dbuser)>0:
-        if dbuser[0].uname == ruser:
-            cuser = 1
-        else:
-            cuser = 0
+        cuser = 1
         # 判断密码
         if len(dbpasswd) > 0:
-            if rpasswd_sha1 == dbpasswd[0].upasswd:
-                cpasswd = 1
-            else:
-                cpasswd = 0
+            print "2****"
+
+            cpasswd = 1
+
             url = request.COOKIES.get('url')
             print url
             # 判断是否记住账户,记住写入cookie
@@ -101,22 +107,31 @@ def login_handler(request):
             # 记录用户登陆的id,方便以后的查询
             request.session['user_id'] = dbuser[0].id
             request.session['user_name'] = dbuser[0].uname
-            #se = request.session.get('user_id')
-           # print se,'se'
             return reponse
+        else:
+            cuser = 0
+            cpasswd = 0
+            context = {'cuser': cuser, 'cpasswd': cpasswd, }
+            return render(request, 'df_user/login.html', context)
+
     else:
         cuser = 0
-        if len(dbpasswd) > 0:
-            cpasswd = 1
-        else:
-            cpasswd = 0
+        cpasswd = 0
+        print cuser,'cuser'
+        print cpasswd,'cpasswd'
         # 删除数据库中存储的用户登陆id
-        del request.session['user_id']
-        del request.session['user_name']
-        #se = request.session.get('user_id')
-        #print se, 'se'
+        try:
+            del request.session['user_id']
+            del request.session['user_name']
+        except:
+            pass
+        se = request.session.get('user_id')
+        print se, 'se'
+        print '+++++'
+        print cuser
+        print cpasswd
         context = {'cuser': cuser, 'cpasswd': cpasswd, }
-        return render(request, 'df_user/register.html', context)
+        return render(request, 'df_user/login.html', context)
 
 # 退出
 def logout(request):
