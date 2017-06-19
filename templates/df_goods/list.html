@@ -4,13 +4,16 @@
 
 
 {%block content%}
+
 {%block content1%}
+
 <div class="breadcrumb">
 		<a href="#">全部分类</a>
 		<span>></span>
 		<a href="#">{{type_object.ttitle}}</a>
 		<input type="hidden" value="{{type_object.id}}" id="type_id">
 	</div>
+
 {%endblock content1%}
 	<div class="main_wrap clearfix">
 		<div class="l_wrap fl clearfix">
@@ -19,8 +22,8 @@
 				<ul>
                     {%for goods in new2%}
 					<li>
-						<a href="#"><img src="/static/{{goods.gpic}}"></a>
-						<h4><a href="#">{{goods.gtitle}}</a></h4>
+						<a href="/index/detail{{goods.id}}/"><img src="/static/{{goods.gpic}}"></a>
+						<h4><a href="/index/detail{{goods.id}}/">{{goods.gtitle}}</a></h4>
 						<div class="prize">￥{{goods.gprice}}</div>
 					</li>
                     {%endfor%}
@@ -40,8 +43,8 @@
 			<ul class="goods_type_list clearfix">
                 {%for goods in lgoods%}
 				<li>
-					<a href="detail.html"><img src="/static/{{goods.gpic}}" id="11"></a>
-					<h4><a href="detail.html">{{goods.gtitle}}</a></h4>
+					<a href="/index/detail{{goods.id}}/"><img src="/static/{{goods.gpic}}" id="11"></a>
+					<h4><a href="/index/detail{{goods.id}}/">{{goods.gtitle}}</a></h4>
 					<div class="operate">
 						<span class="prize">￥{{goods.gprice}}</span>
 						<span class="unit">{{goods.gprice}}/{{goods.gunit}}</span>

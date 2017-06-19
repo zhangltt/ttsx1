@@ -53,8 +53,8 @@
 			<ul class="goods_list fl">
 				{%for good in type.new%}
 				<li>
-					<h4><a href="#">{{good.gtitle}}</a></h4>
-					<a href="#"><img src="/static/{{good.gpic}}"></a>
+					<h4><a href="/index/detail{{good.id}}/">{{good.gtitle}}</a></h4>
+					<a href="/index/detail{{good.id}}/"><img src="/static/{{good.gpic}}"></a>
 					<div class="prize">¥ {{good.gprice}}</div>
 				</li>
 				{%endfor%}

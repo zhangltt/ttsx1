@@ -79,11 +79,17 @@ def goodslist(request,type_id,pageid=None):
                    }
     return render(request,'df_goods/list.html',context)
 
-
-def goods_detail(request,goodsid):
+# 显示详情页商品
+def goods_detail(request, goodsid):
     # 获取这个商品对应的品类
     type_object = TypeInfo.objects.filter(goodsinfo__id=goodsid)
     # 获取新品的前两个
     new2 = type_object[0].goodsinfo_set.order_by('-id')[0:2]
-    context={'head':1,'title':'商品列表','new2':new2}
+    # 获取商品对象
+    goods_object = GoodsInfo.objects.get(id=goodsid)
+    context={'head':1,'title':'商品列表','new2':new2,'type':type_object[0],"goods":goods_object}
     return render(request,'df_goods/detail.html',context)
+
+
+def detail_handle(request):
+    pass

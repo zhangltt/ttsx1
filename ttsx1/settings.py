@@ -118,3 +118,6 @@ TINYMCE_DEFAULT_CONFIG = {
     'width': 600,
     'height': 400,
 }
+
+
+MEDIA_ROOT=os.path.join(BASE_DIR,"static")
