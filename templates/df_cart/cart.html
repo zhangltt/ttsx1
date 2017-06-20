@@ -1,7 +1,86 @@
 {%extends 'bash.html'%}
 
+
+{%block head%}
+
+<script type="text/javascript">
+
+$(function(){
+	var zj = 0;
+// -------------封装计算函数--------------------------------------------------
+	function js() {
+		// 使用循环计算每一条商品的小计
+		$('.cart_list_td').each(function () {
+			//获取单品价格
+			var dj = parseFloat($(this).children('.col05').find('em').text());
+			// 获取单品数量
+			var count = parseInt($(this).find('.num_show').val());
+			// 计算小计并插入
+			var xj = parseFloat((dj * count).toFixed(2));
+			$(this).children('.col07').text(xj + '元');
+			//判断是否勾选
+			if($(this).children('.col01').find('input').prop('checked'))
+			{
+				 // 计算总计
+				parseFloat(zj += xj).toFixed(2);
+			};
+		});
+		 };
+//--------------------------------------------------------------------------------
+	js();
+// 插入总计
+	$('.settlements').children('.col03').find('em').text(zj);
+
+//-------------点击选项----------------------------------------------------------
+	$('#checkedall').change(function(){
+		//如果选中全选,则其他的浮选框都选中
+		if($(this).prop('checked'))
+		{
+		    $(':checkbox').prop('checked',true);
+		}
+		//否则其他的复选框全部取消
+		else
+		{
+		  $(':checkbox').prop('checked',false);
+		};
+
+	});
+//-------------------------------------------------------------------------------
+	$(':checkbox').not($('#checkedall')).change(function(){
+		var num1 = $(':checked').not($('#checkedall')).length;
+		var num2 = $(':checkbox').not($('#checkedall')).length;
+		if(num1<num2)
+		{
+		   $('#checkedall').prop('checked',false);
+		}
+		else
+		{
+		   $('#checkedall').prop('checked',true);
+		}
+
+	});
+
+
+
+	//alert($(':checkbox').prop('checked',$(':checkbox').prop('checked')).length)
+//		if($(':checkbox').not($('#checkedall')).length)
+//		{
+//
+//		}
+
+
+//-------------------------------------------------------------------------------
+});
+
+
+</script>
+
+{%endblock head%}
+
+
+
 {%block content%}
-<div class="total_count">全部商品<em>2</em>件</div>
+<div class="total_count">全部商品<em>{{cart_nums}}</em>件</div>
 	<ul class="cart_list_th clearfix">
 		<li class="col01">商品名称</li>
 		<li class="col02">商品单位</li>
@@ -14,15 +93,15 @@
 
 	{%for goods in goods_object%}
 	<ul class="cart_list_td clearfix">
-		<li class="col01"><input type="checkbox" name="" checked></li>
+		<li class="col01"><input type="checkbox" name="" checked="checked" value="{{goods.id}}"></li>
 		<li class="col02"><img src="/static/{{goods.goods.gpic}}"></li>
 		<li class="col03">{{goods.goods.gtitle}}<br>库存:<em>{{goods.goods.gkucun}}</em></li>
 		<li class="col04">{{goods.goods.gunit}}</li>
-		<li class="col05">{{goods.goods.gprice}}元</li>
+		<li class="col05"><em>{{goods.goods.gprice}}</em>元</li>
 		<li class="col06">
 			<div class="num_add">
 				<a href="javascript:;" class="add fl">+</a>
-				<input type="text" class="num_show fl" value="1">
+				<input type="text" class="num_show fl" value="{{goods.count}}">
 				<a href="javascript:;" class="minus fl">-</a>
 			</div>
 		</li>
@@ -31,28 +110,12 @@
 	</ul>
 	{%endfor%}
 
-	<!--<ul class="cart_list_td clearfix">-->
-		<!--<li class="col01"><input type="checkbox" name="" checked></li>-->
-		<!--<li class="col02"><img src="images/goods/goods003.jpg"></li>-->
-		<!--<li class="col03">大兴大棚草莓<br><em>16.80元/500g</em></li>-->
-		<!--<li class="col04">500g</li>-->
-		<!--<li class="col05">16.80元</li>-->
-		<!--<li class="col06">-->
-			<!--<div class="num_add">-->
-				<!--<a href="javascript:;" class="add fl">+</a>-->
-				<!--<input type="text" class="num_show fl" value="1">-->
-				<!--<a href="javascript:;" class="minus fl">-</a>-->
-			<!--</div>-->
-		<!--</li>-->
-		<!--<li class="col07">16.80元</li>-->
-		<!--<li class="col08"><a href="javascript:;">删除</a></li>-->
-	<!--</ul>-->
 
 
 	<ul class="settlements">
-		<li class="col01"><input type="checkbox" name="" checked=""></li>
+		<li class="col01"><input type="checkbox" name="" id="checkedall" checked="checked"></li>
 		<li class="col02">全选</li>
-		<li class="col03">合计(不含运费)：<span>¥</span><em>42.60</em><br>共计<b>2</b>件商品</li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em>42.60</em><br>共计<b>{{cart_nums}}</b>件商品</li>
 		<li class="col04"><a href="place_order.html">去结算</a></li>
 	</ul>
 

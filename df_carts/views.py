@@ -7,13 +7,10 @@ from df_user.decorator import *
 
 @login_check
 def cart(request):
-    print '+++++'
     # 获取购物车中的商品对像
     goods_object = CartInfo.objects.filter(user__id=request.session['user_id'])
     # 获取购物车的条数
     cart_nums = goods_object.count()
-
-
-    context = {'head':1,'cart_nums':cart_nums,'goods_object':goods_object}
+    context = {'head':1,'title':'购物车','cart_nums':cart_nums,'goods_object':goods_object}
 
     return render(request,'df_cart/cart.html',context)
