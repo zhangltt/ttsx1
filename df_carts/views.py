@@ -1,5 +1,6 @@
 #coding=utf-8
-from django.shortcuts import render
+from django.shortcuts import render,redirect
+from django.http import HttpResponse
 from models import *
 from df_user.decorator import *
 # Create your views here.
@@ -14,3 +15,6 @@ def cart(request):
     context = {'head':1,'title':'购物车','cart_nums':cart_nums,'goods_object':goods_object}
 
     return render(request,'df_cart/cart.html',context)
+
+def cart_handle(request):
+    pass
