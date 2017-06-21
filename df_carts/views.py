@@ -1,6 +1,6 @@
 #coding=utf-8
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from models import *
 from df_user.decorator import *
 # Create your views here.
@@ -17,4 +17,30 @@ def cart(request):
     return render(request,'df_cart/cart.html',context)
 
 def cart_handle(request):
-    pass
+    rget = request.GET
+    cart_id = rget.get('cart_id')
+    status = rget.get('status')
+    counts = rget.get('count')
+    print cart_id
+    print status
+    print counts
+
+    # 获取购物车中对应商品的对象
+    try:
+        goods = CartInfo.objects.get(id=int(cart_id))
+    except:
+        pass
+    # 根据穿回来的状态码进行操作
+
+    if status == 'add':
+        goods.count+=int(counts)
+        goods.save()
+    if status == 'minus':
+        goods.count-=int(counts)
+        goods.save()
+    if status == 'd':
+        goods.delete()
+    cart_count = CartInfo.objects.filter(user=request.session['user_id']).count()
+
+    context = {'cart_count':cart_count}
+    return JsonResponse(context)

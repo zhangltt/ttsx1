@@ -68,24 +68,58 @@ $(function(){
 //---------------------add--------------------------------------------------------
 
 	$('.add').click(function(){
+	    // 获取当前的数量
 	   var nums = parseInt($(this).next().val());
-	   $(this).next().val(nums+1);
-		js();
+	   if(nums < $(this).parents('.col06').prevAll('.col03').find('em').text())
+	   {
+           $(this).next().val(nums + 1);
+
+       };
+
+
+	   // 获取商品id
+		var goodsId = $(this).parents('.col06').prevAll('.col01').find('input').val();
+		// 发送请求
+	  $.get('/cart/cart_handle/',{'cart_id':goodsId,'status':'add','count':1})
 
 	});
 
 //---------------------	minus--------------------------------------
 	$('.minus').click(function(){
 	    var nums = parseInt($(this).prev().val());
-	    $(this).prev().val(nums-1);
-	    js();
+	     if(nums > 0)
+	     {
+             $(this).prev().val(nums - 1);
+             js();
+         }
+
+          // 获取商品id
+		var goodsId = $(this).parents('.col06').prevAll('.col01').find('input').val();
+		// 发送请求
+	  $.get('/cart/cart_handle/',{'cart_id':goodsId,'status':'minus','count':1})
+
+
 	});
-//-------------------------------------------------------------------------------
+//-------------------------删除------------------------------------------------------
 
 
 	$('.col08').click(function(){
-	   $(this).parent().remove()
-		js()
+	   $(this).parent().remove();
+		js();
+
+		    // 获取商品id
+		var goodsId = $(this).parents('.cart_list_td').children('.col01').find('input').val();
+		var counts = $(this).parents('.cart_list_td').children('.col06').find('input').val();
+
+		// 发送请求
+		//var object = $(this)
+	  $.get('/cart/cart_handle/',{'cart_id':goodsId,'status':'d','count':counts},function(data){
+
+		 $('#show_count').text(data.cart_count)
+
+		});
+
+
 	});
 
 

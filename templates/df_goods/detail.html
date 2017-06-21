@@ -20,7 +20,7 @@
 		$('#add_cart').click(function(){
 
 		    $.get('/index/detail_handle',{"nums":$('.num_show').val(),"goodsid":$("#goodsid").val()},function(data){
-					alert(data.count)
+					
 					// 插入购物车
 				$('#show_count').text(data.count);
 
